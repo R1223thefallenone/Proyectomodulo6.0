@@ -1,21 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Configuración técnica del documento -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi App Node & Express</title>
+    
+    <!-- Estilos embebidos para una presentación profesional y centrada -->
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f0f2f5; }
-        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; }
-        .btn { display: inline-block; margin-top: 1rem; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+        /* Configuración del cuerpo: centrado absoluto usando Flexbox */
+        body { 
+            font-family: sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0;
+            background-color: #f0f2f5; 
+        }
+        /* Contenedor principal con sombra y bordes redondeados (estilo Card) */
+        .card { 
+            background: white; 
+            padding: 2rem; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            text-align: center; 
+        }
+        /* Estilo del botón de acción principal */
+        .btn { 
+            display: inline-block; 
+            margin-top: 1rem; 
+            padding: 10px 20px; 
+            background-color: #007bff; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            transition: background 0.3s;
+        }
+        .btn:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
+    <!-- Interfaz de usuario para la entrega del Módulo 7 -->
     <div class="card">
         <h1>🚀 Servidor Node.js Activo</h1>
         <p>Proyecto Backend - Gestión de Usuarios</p>
         <hr>
+        
+        <!-- Indicador visual de persistencia relacional con PostgreSQL -->
         <p>Estado de la Base de Datos: <b>Conectada ✅</b></p>
+        
+        <!-- Enlace funcional hacia la ruta de la API que retorna el JSON de usuarios -->
         <a href="/usuarios" class="btn">Ver Usuarios (JSON)</a>
     </div>
 </body>
