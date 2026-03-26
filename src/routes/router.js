@@ -1,7 +1,14 @@
-// Importación de la clase Router de Express para crear rutas modulares y montables
+// Importación de la clase Router de Express
 import { Router } from 'express';
-// Importación de las funciones controladoras desde el archivo de controladores
-import { getStatus, getHome } from '../controllers/mainController.js';
+// Importación de las funciones controladoras (Módulo 6 y 7)
+import { 
+    getStatus, 
+    getHome, 
+    getUsers, 
+    seedUsers, 
+    updateUser,
+    deleteUser 
+} from '../controllers/mainController.js';
 // Importación del middleware de persistencia (logger)
 import { loggerMiddleware } from '../middlewares/loggerMiddleware.js';
 
@@ -9,18 +16,26 @@ import { loggerMiddleware } from '../middlewares/loggerMiddleware.js';
 const router = Router();
 
 /**
- * Definición de la ruta '/status':
- * 1. Primero se ejecuta 'loggerMiddleware' para persistir el acceso en log.txt.
- * 2. Si todo sale bien, se ejecuta 'getStatus' para enviar la respuesta JSON.
+ * --- RUTAS MÓDULO 6 (Con Middleware de Log) ---
+ * Se aplica loggerMiddleware antes de cada controlador para cumplir con la persistencia en log.txt
  */
+router.get('/', loggerMiddleware, getHome); 
 router.get('/status', loggerMiddleware, getStatus); 
 
 /**
- * Definición de la ruta raíz ('/'):
- * Se aplica el middleware de log para registrar cada visita a la página principal
- * y luego se llama al controlador 'getHome' que responde con el HTML.
+ * --- RUTAS MÓDULO 7 (Gestión de Base de Datos) ---
  */
-router.get('/', loggerMiddleware, getHome); 
 
-// Exportación por defecto del router para ser utilizado en app.js mediante ES Modules
+// 1. Ruta para sembrar datos iniciales (Requisito: 3 registros simulados)
+router.get('/seed', seedUsers);
+
+// 2. Ruta para obtener usuarios (Requisito: Respuesta en JSON clara y sin datos sensibles)
+router.get('/usuarios', getUsers);
+
+router.put('/usuarios/:id', updateUser);
+
+// 3. Ruta para eliminar un usuario por ID (Requisito: Validación de ID existente)
+router.delete('/usuarios/:id', deleteUser);
+
+// Exportación por defecto del router
 export default router;
