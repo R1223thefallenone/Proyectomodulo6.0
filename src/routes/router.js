@@ -1,59 +1,58 @@
 /**
  * --- SISTEMA DE ENRUTAMIENTO MODULAR ---
- * Este archivo centraliza todas las rutas de la aplicación, separando la lógica 
- * de acceso de la configuración principal del servidor (app.js).
+ * Este archivo es el "director de tráfico" de la app. 
+ * Separé las rutas por módulos para que el código no sea un caos y sea fácil de mantener.
  */
-
-// Importación de la clase Router de Express para crear rutas modulares y montables
 import { Router } from 'express';
-
-// Importación de las funciones controladoras que contienen la lógica de negocio para los Módulos 6 y 7
 import { 
     getStatus, 
     getHome, 
     getUsers, 
     seedUsers, 
     updateUser,
-    deleteUser 
+    deleteUser,
+    login 
 } from '../controllers/mainController.js';
 
-// Importación del middleware encargado de la persistencia de logs en el archivo log.txt
 import { loggerMiddleware } from '../middlewares/loggerMiddleware.js';
+import { verifyToken } from '../middlewares/authMiddleware.js';
+import { upload } from '../config/multer.js';
 
-// Inicialización del objeto router que agrupará nuestras rutas
 const router = Router();
 
 /**
- * --- RUTAS MÓDULO 6: SERVICIOS BÁSICOS Y PERSISTENCIA ---
- * En estas rutas aplicamos el 'loggerMiddleware' como paso previo para registrar 
- * cada visita en el archivo plano antes de ejecutar el controlador final.
+ * --- RUTAS PÚBLICAS (Módulo 6 y Login) ---
+ * Estas rutas están abiertas porque son el punto de entrada. 
+ * El login tiene que ser público sí o sí para que los usuarios puedan obtener su token.
  */
-
-// Ruta raíz: Carga el archivo index.html para el frontend
 router.get('/', loggerMiddleware, getHome); 
-
-// Ruta de estado: Verifica la salud del servidor y registra el acceso en logs
 router.get('/status', loggerMiddleware, getStatus); 
+router.post('/login', login); 
 
 /**
- * --- RUTAS MÓDULO 7: GESTIÓN DE BASE DE DATOS (CRUD) ---
- * Estas rutas interactúan directamente con PostgreSQL a través de Sequelize.
+ * --- RUTAS PROTEGIDAS (Módulo 8 - Requieren JWT) ---
+ * Acá es donde nos ponemos serios con la seguridad. 
+ * El middleware 'verifyToken' actúa como un filtro: si no hay token válido, no pasan.
  */
 
-// 1. SEMILLA (Seed): Inserta 3 usuarios de prueba para inicializar la base de datos de forma rápida
+// Subida de archivos (Lección 3): 
+// Usamos Multer para procesar la imagen, pero solo si el usuario está autenticado.
+router.post('/upload', verifyToken, upload.single('archivo'), (req, res) => {
+    res.json({ status: "success", message: "Archivo subido con éxito", file: req.file });
+});
+
+// Gestión de usuarios (CRUD Protegido):
+// No queremos que cualquiera pueda editar o borrar usuarios de la base de datos, 
+// así que blindamos el PUT y el DELETE con JWT.
+router.put('/usuarios/:id', verifyToken, updateUser);
+router.delete('/usuarios/:id', verifyToken, deleteUser);
+
+/**
+ * --- RUTAS DE CONSULTA (Módulo 7) ---
+ * El SEED es para poblar la base de datos rápido durante el desarrollo.
+ * La lista de usuarios la dejé pública para poder ver los resultados del CRUD fácilmente.
+ */
 router.get('/seed', seedUsers);
+router.get('/usuarios', getUsers); 
 
-// 2. LECTURA (Read): Retorna todos los usuarios en formato JSON, aplicando el filtro de seguridad (excluye passwords)
-router.get('/usuarios', getUsers);
-
-// 3. ACTUALIZACIÓN (Update): Modifica los datos de un usuario existente mediante su ID enviado por parámetro
-router.put('/usuarios/:id', updateUser);
-
-// 4. ELIMINACIÓN (Delete): Remueve un usuario de la tabla basándose en su ID único
-router.delete('/usuarios/:id', deleteUser);
-
-/**
- * Exportación por defecto del router utilizando ES Modules.
- * Esto permite que app.js lo importe y lo monte como middleware de nivel de aplicación.
- */
 export default router;

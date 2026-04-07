@@ -1,43 +1,47 @@
-## Proyecto Backend - Módulo 7: Gestión de Usuarios y Persistencia en PostgreSQL
+## Proyecto Backend Integrador: API RESTful, Seguridad JWT y Gestión de Archivos
+
 Descripción
-Este proyecto ha evolucionado de una estructura básica a una aplicación profesional con Persistencia de Datos Relacional. Se integró PostgreSQL como motor de base de datos y Sequelize como ORM, permitiendo una gestión de usuarios eficiente y segura.
+Este proyecto representa la consolidación final del backend, evolucionando de una estructura básica a una **API RESTful profesional**. Se integró persistencia en **PostgreSQL**, seguridad mediante **JSON Web Tokens (JWT)** para la protección de rutas y un sistema de carga de archivos multimedia con **Multer**.
 
 ## Justificaciones Técnicas
-Punto de entrada (app.js): Se mantiene como el núcleo del servidor, encargándose ahora de inicializar la conexión a la base de datos mediante la función connectDB antes de poner el servidor en escucha.
+Punto de entrada (app.js): Se mantiene como el núcleo del servidor, inicializando la conexión a la base de datos y configurando los middlewares globales para el manejo de JSON y archivos estáticos.
 
 ## ES Modules:
- Se continúa utilizando la sintaxis moderna de import/export, lo que facilitó la integración de los Modelos de Sequelize y la configuración de la base de datos de forma limpia.
+Se continúa utilizando la sintaxis moderna de import/export, lo que facilitó la integración de los Modelos de Sequelize y la configuración de la base de datos de forma limpia.
 
 ## Estructura de Carpetas:
- Se expandió la modularidad añadiendo las carpetas models (para la definición de tablas) y config (para la conexión a la DB), cumpliendo con el patrón MVC.
+Se mantuvo la arquitectura modular añadiendo middlewares de autenticación y configuración de archivos, respetando el patrón **controllers/, routes/, middlewares/** solicitado.
 
-## Persistencia con Sequelize (ORM):
-Se eligió Sequelize porque permite abstraer las consultas SQL a objetos de JavaScript, facilitando el manejo de validaciones 
-de datos (como el formato de email) y proporcionando seguridad nativa contra inyecciones SQL.
+## Seguridad con JWT:
+Se implementó un middleware de autenticación que protege las rutas sensibles (`PUT`, `DELETE`, `POST /upload`). Esta decisión técnica asegura que solo usuarios con un token válido puedan modificar los datos.
 
-## Instalación y Ejecución clonar el repositorio.
+## Gestión de Archivos (Multer):
+Se eligió Multer para procesar la subida de imágenes, implementando validaciones de tamaño y tipo de archivo en el servidor para garantizar la seguridad y el correcto almacenamiento en la carpeta **uploads/**.
 
-Ejecutar npm install para instalar las nuevas dependencias (sequelize, pg, pg-hstore).
+## Instalación y Ejecución
+Clonar el repositorio.
 
-Configurar el archivo .env con las credenciales de PostgreSQL (DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT).
+Ejecutar `npm install` para instalar las dependencias (`sequelize`, `pg`, `jsonwebtoken`, `multer`, `bcrypt`).
 
-Ejecutar con npm run dev para que Sequelize sincronice las tablas automáticamente.
+Configurar el archivo `.env` con las credenciales de PostgreSQL y la clave `JWT_SECRET`.
+
+Crear manualmente la carpeta `uploads/` en la raíz del proyecto.
+
+Ejecutar con `npm run dev` para que el servidor inicie con sincronización automática.
 
 ## Rutas
-GET /: Devuelve el index.html con la interfaz básica del proyecto.
+POST /login: Autentica al usuario y entrega un JWT válido.
 
-GET /status: Devuelve el estado del servidor y persiste el acceso en log.txt.
+GET /usuarios: Devuelve la lista de usuarios en JSON (público).
 
-GET /seed: Ruta de inicialización que inyecta automáticamente 3 usuarios de prueba en la base de datos.
+PUT /usuarios/:id: Actualiza datos de un usuario específico. **(Requiere JWT)**.
 
-GET /usuarios: Devuelve la lista de usuarios en JSON, protegiendo la privacidad al excluir el campo password.
+DELETE /usuarios/:id: Elimina un registro por su ID. **(Requiere JWT)**.
 
-PUT /usuarios/:id: Permite la actualización de datos de un usuario específico.
-
-DELETE /usuarios/:id: Permite la eliminación lógica o física de un registro por su ID.
+POST /upload: Permite la subida de una imagen (campo: `archivo`). **(Requiere JWT)**.
 
 ## reflexion tecnica
-La implementación de una base de datos relacional mediante un ORM marca un hito en la escalabilidad del proyecto. Al definir un Modelo de Usuario, no solo automatizamos la creación de tablas, sino que centralizamos la lógica de validación. La arquitectura modular permitió que el paso de archivos planos (fs) a PostgreSQL fuera fluido, demostrando que el código está preparado para entornos productivos donde la integridad de los datos es prioritaria.
+Este entregable cierra el ciclo completo de desarrollo backend: desde la estructura inicial y lógica de negocio, hasta la exposición de una API segura. La integración de JWT y Multer demuestra la capacidad de construir aplicaciones robustas que protegen la información y manejan recursos multimedia, quedando en condiciones óptimas para ser consumidas por cualquier cliente externo.
 
 ## GITHUB
 https://github.com/R1223thefallenone/Proyectomodulo6.0
